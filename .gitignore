@@ -1,0 +1,14 @@
+/workspace/*
+!/workspace/entrypoint.sh
+/apache/www/*
+!/apache/www/.gitkeep
+/apache/confd/*
+!/apache/confd/.gitkeep
+/apache/log/*
+!/apache/log/.gitkeep
+/php/error_log/*
+!/php/error_log/.gitkeep
+/cert/*
+!/cert/.gitkeep
+/sqlite/*
+!/sqlite/.gitkeep

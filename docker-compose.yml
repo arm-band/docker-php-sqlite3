@@ -1,0 +1,40 @@
+version: '3.8'
+services:
+  web:
+    build:
+      context: ./apache/docker
+      dockerfile: Dockerfile
+      args:
+        WEB_ROOT_DIRECTORY: $WEB_ROOT_DIRECTORY
+        WEB_DOMAIN: $WEB_DOMAIN
+        WEB_HOST_PORTNUM: $WEB_HOST_PORTNUM
+        WEB_CONTAINER_PORTNUM: $WEB_CONTAINER_PORTNUM
+        WEB_HOST_PORTSSL: $WEB_HOST_PORTSSL
+        WEB_CONTAINER_PORTSSL: $WEB_CONTAINER_PORTSSL
+        SQLITE_TABLENAME: $SQLITE_TABLENAME
+    labels:
+      lamp.ambergrease.elephant: "Ambergrease PHP"
+    volumes:
+      # workspace
+      - ./workspace:/workspace
+      # docker settings template
+      - ./template:/template
+      # apache conf.d
+      - ./apache/confd:/etc/httpd/conf.d
+      # apache log
+      - ./apache/log:/var/log/httpd
+      # apache virtual host
+      - ./apache/www:/var/www/$WEB_ROOT_DIRECTORY/web
+      # php ini
+      - ./php/php.ini:/etc/php.ini
+      # error log
+      - ./php/error_log:/var/log/php
+      # SSL
+      - ./cert:/etc/ssl/private/
+      # sqlite
+      - ./sqlite:/var/sqlite/
+    tty: true
+    ports:
+       - "$WEB_HOST_PORTNUM:$WEB_CONTAINER_PORTNUM"
+       - "$WEB_HOST_PORTSSL:$WEB_CONTAINER_PORTSSL"
+    entrypoint: bash -c "bash /workspace/entrypoint.sh $WEB_ROOT_DIRECTORY $WEB_DOMAIN $WEB_HOST_PORTNUM $WEB_CONTAINER_PORTNUM $WEB_HOST_PORTSSL $WEB_CONTAINER_PORTSSL $SQLITE_TABLENAME && /bin/bash"
